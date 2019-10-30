@@ -9,7 +9,7 @@
         <column name="name" type="varchar" required="true" />
         <column name="href" type="varchar" required="true" />
         <column name="type" type="varchar" required="false" defaultValue="" />
-        <column name="description" type="varchar" required="true" />
+        <column name="description" required="true" sqlType="text" />
         <column name="capturable" type="boolean" required="false" defaultValue="0" />
         <column name="tradeable" type="boolean" required="false" defaultValue="0" />
         <column name="battlepet" type="boolean" required="false" defaultValue="0" />

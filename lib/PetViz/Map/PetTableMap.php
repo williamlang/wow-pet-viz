@@ -196,7 +196,7 @@ class PetTableMap extends TableMap
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
         $this->addColumn('href', 'Href', 'VARCHAR', true, 255, null);
         $this->addColumn('type', 'Type', 'VARCHAR', false, 255, '');
-        $this->addColumn('description', 'Description', 'VARCHAR', true, 255, null);
+        $this->addColumn('description', 'Description', 'VARCHAR', true, null, null);
         $this->addColumn('capturable', 'Capturable', 'BOOLEAN', false, 1, false);
         $this->addColumn('tradeable', 'Tradeable', 'BOOLEAN', false, 1, false);
         $this->addColumn('battlepet', 'Battlepet', 'BOOLEAN', false, 1, false);

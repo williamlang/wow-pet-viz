@@ -16,6 +16,7 @@ CREATE TABLE `pets`
     `name` VARCHAR(255) NOT NULL,
     `href` VARCHAR(255) NOT NULL,
     `type` VARCHAR(255) DEFAULT '',
+    `description` text NOT NULL,
     `capturable` TINYINT(1) DEFAULT 0,
     `tradeable` TINYINT(1) DEFAULT 0,
     `battlepet` TINYINT(1) DEFAULT 0,
@@ -38,6 +39,24 @@ CREATE TABLE `abilities`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `ability_id` INTEGER NOT NULL,
     `name` VARCHAR(255) NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- pet_abilities
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `pet_abilities`;
+
+CREATE TABLE `pet_abilities`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `ability_id` INTEGER NOT NULL,
+    `pet_id` INTEGER NOT NULL,
+    `slot` INTEGER NOT NULL,
+    `level` INTEGER NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`)
