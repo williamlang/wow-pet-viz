@@ -14,6 +14,8 @@
         ->find();
 
     foreach ($abilities as $i => $ability) {
+        // @todo: endpoint needs to be migrated
+        // https://develop.battle.net/documentation/guides/community-apis-world-of-warcraft-community-api-migration-status
         $response = $client->get('https://us.api.blizzard.com/wow/pet/ability/' . $ability->getAbilityId(), [
             'query' => [
                 'namespace' => 'static-us',
