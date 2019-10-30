@@ -1,0 +1,40 @@
+<database name="default" defaultIdMethod="native"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd"
+          namespace="PetViz">
+
+    <table name="pets" phpName="Pet">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="pet_id" type="integer" required="true" />
+        <column name="name" type="varchar" required="true" />
+        <column name="href" type="varchar" required="true" />
+        <column name="type" type="varchar" required="false" defaultValue="" />
+        <column name="description" type="varchar" required="true" />
+        <column name="capturable" type="boolean" required="false" defaultValue="0" />
+        <column name="tradeable" type="boolean" required="false" defaultValue="0" />
+        <column name="battlepet" type="boolean" required="false" defaultValue="0" />
+        <column name="alliance_only" type="boolean" required="false" defaultValue="0" />
+        <column name="horde_only" type="boolean" required="false" defaultValue="0" />
+        <column name="icon" type="varchar" required="false" defaultValue="" />
+
+        <behavior name="timestampable" />
+    </table>
+
+    <table name="abilities" phpName="Ability">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="ability_id" type="integer" required="true" />
+        <column name="name" type="varchar" required="true" />
+
+        <behavior name="timestampable" />
+    </table>
+
+    <table name="pet_abilities" phpName="PetAbility">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="ability_id" type="integer" required="true" />
+        <column name="pet_id" type="integer" required="true" />
+        <column name="slot" type="integer" required="true" />
+        <column name="level" type="integer" required="true" />
+
+        <behavior name="timestampable" />
+    </table>
+</database>

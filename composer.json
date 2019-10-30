@@ -4,7 +4,9 @@
     "type": "project",
     "require": {
         "guzzlehttp/guzzle": "^6.4",
-        "goodby/csv": "^1.3"
+        "goodby/csv": "^1.3",
+        "nesbot/carbon": "^2.25",
+        "propel/propel": "~2.0@dev"
     },
     "authors": [
         {
@@ -12,5 +14,13 @@
             "email": "wlang@tableau.com"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "autoload": {
+        "files": [
+            "generated-conf/config.php"
+        ],
+        "psr-4": {
+            "PetViz\\": "lib/PetViz"
+        }
+    }
 }
