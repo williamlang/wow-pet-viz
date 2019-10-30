@@ -84,6 +84,27 @@ abstract class Ability implements ActiveRecordInterface
     protected $name;
 
     /**
+     * The value for the cooldown field.
+     *
+     * @var        int
+     */
+    protected $cooldown;
+
+    /**
+     * The value for the rounds field.
+     *
+     * @var        int
+     */
+    protected $rounds;
+
+    /**
+     * The value for the passive field.
+     *
+     * @var        boolean
+     */
+    protected $passive;
+
+    /**
      * The value for the created_at field.
      *
      * @var        DateTime
@@ -361,6 +382,46 @@ abstract class Ability implements ActiveRecordInterface
     }
 
     /**
+     * Get the [cooldown] column value.
+     *
+     * @return int
+     */
+    public function getCooldown()
+    {
+        return $this->cooldown;
+    }
+
+    /**
+     * Get the [rounds] column value.
+     *
+     * @return int
+     */
+    public function getRounds()
+    {
+        return $this->rounds;
+    }
+
+    /**
+     * Get the [passive] column value.
+     *
+     * @return boolean
+     */
+    public function getPassive()
+    {
+        return $this->passive;
+    }
+
+    /**
+     * Get the [passive] column value.
+     *
+     * @return boolean
+     */
+    public function isPassive()
+    {
+        return $this->getPassive();
+    }
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -461,6 +522,74 @@ abstract class Ability implements ActiveRecordInterface
     } // setName()
 
     /**
+     * Set the value of [cooldown] column.
+     *
+     * @param int $v new value
+     * @return $this|\PetViz\Ability The current object (for fluent API support)
+     */
+    public function setCooldown($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->cooldown !== $v) {
+            $this->cooldown = $v;
+            $this->modifiedColumns[AbilityTableMap::COL_COOLDOWN] = true;
+        }
+
+        return $this;
+    } // setCooldown()
+
+    /**
+     * Set the value of [rounds] column.
+     *
+     * @param int $v new value
+     * @return $this|\PetViz\Ability The current object (for fluent API support)
+     */
+    public function setRounds($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->rounds !== $v) {
+            $this->rounds = $v;
+            $this->modifiedColumns[AbilityTableMap::COL_ROUNDS] = true;
+        }
+
+        return $this;
+    } // setRounds()
+
+    /**
+     * Sets the value of the [passive] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\PetViz\Ability The current object (for fluent API support)
+     */
+    public function setPassive($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->passive !== $v) {
+            $this->passive = $v;
+            $this->modifiedColumns[AbilityTableMap::COL_PASSIVE] = true;
+        }
+
+        return $this;
+    } // setPassive()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -545,13 +674,22 @@ abstract class Ability implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : AbilityTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AbilityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AbilityTableMap::translateFieldName('Cooldown', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->cooldown = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AbilityTableMap::translateFieldName('Rounds', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->rounds = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : AbilityTableMap::translateFieldName('Passive', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->passive = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : AbilityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AbilityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : AbilityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -564,7 +702,7 @@ abstract class Ability implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = AbilityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = AbilityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\PetViz\\Ability'), 0, $e);
@@ -787,6 +925,15 @@ abstract class Ability implements ActiveRecordInterface
         if ($this->isColumnModified(AbilityTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
+        if ($this->isColumnModified(AbilityTableMap::COL_COOLDOWN)) {
+            $modifiedColumns[':p' . $index++]  = 'cooldown';
+        }
+        if ($this->isColumnModified(AbilityTableMap::COL_ROUNDS)) {
+            $modifiedColumns[':p' . $index++]  = 'rounds';
+        }
+        if ($this->isColumnModified(AbilityTableMap::COL_PASSIVE)) {
+            $modifiedColumns[':p' . $index++]  = 'passive';
+        }
         if ($this->isColumnModified(AbilityTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
@@ -812,6 +959,15 @@ abstract class Ability implements ActiveRecordInterface
                         break;
                     case 'name':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                        break;
+                    case 'cooldown':
+                        $stmt->bindValue($identifier, $this->cooldown, PDO::PARAM_INT);
+                        break;
+                    case 'rounds':
+                        $stmt->bindValue($identifier, $this->rounds, PDO::PARAM_INT);
+                        break;
+                    case 'passive':
+                        $stmt->bindValue($identifier, (int) $this->passive, PDO::PARAM_INT);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -891,9 +1047,18 @@ abstract class Ability implements ActiveRecordInterface
                 return $this->getName();
                 break;
             case 3:
-                return $this->getCreatedAt();
+                return $this->getCooldown();
                 break;
             case 4:
+                return $this->getRounds();
+                break;
+            case 5:
+                return $this->getPassive();
+                break;
+            case 6:
+                return $this->getCreatedAt();
+                break;
+            case 7:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -928,15 +1093,18 @@ abstract class Ability implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getAbilityId(),
             $keys[2] => $this->getName(),
-            $keys[3] => $this->getCreatedAt(),
-            $keys[4] => $this->getUpdatedAt(),
+            $keys[3] => $this->getCooldown(),
+            $keys[4] => $this->getRounds(),
+            $keys[5] => $this->getPassive(),
+            $keys[6] => $this->getCreatedAt(),
+            $keys[7] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[3]] instanceof \DateTimeInterface) {
-            $result[$keys[3]] = $result[$keys[3]]->format('c');
+        if ($result[$keys[6]] instanceof \DateTimeInterface) {
+            $result[$keys[6]] = $result[$keys[6]]->format('c');
         }
 
-        if ($result[$keys[4]] instanceof \DateTimeInterface) {
-            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        if ($result[$keys[7]] instanceof \DateTimeInterface) {
+            $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -987,9 +1155,18 @@ abstract class Ability implements ActiveRecordInterface
                 $this->setName($value);
                 break;
             case 3:
-                $this->setCreatedAt($value);
+                $this->setCooldown($value);
                 break;
             case 4:
+                $this->setRounds($value);
+                break;
+            case 5:
+                $this->setPassive($value);
+                break;
+            case 6:
+                $this->setCreatedAt($value);
+                break;
+            case 7:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1028,10 +1205,19 @@ abstract class Ability implements ActiveRecordInterface
             $this->setName($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setCreatedAt($arr[$keys[3]]);
+            $this->setCooldown($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUpdatedAt($arr[$keys[4]]);
+            $this->setRounds($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setPassive($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setCreatedAt($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setUpdatedAt($arr[$keys[7]]);
         }
     }
 
@@ -1082,6 +1268,15 @@ abstract class Ability implements ActiveRecordInterface
         }
         if ($this->isColumnModified(AbilityTableMap::COL_NAME)) {
             $criteria->add(AbilityTableMap::COL_NAME, $this->name);
+        }
+        if ($this->isColumnModified(AbilityTableMap::COL_COOLDOWN)) {
+            $criteria->add(AbilityTableMap::COL_COOLDOWN, $this->cooldown);
+        }
+        if ($this->isColumnModified(AbilityTableMap::COL_ROUNDS)) {
+            $criteria->add(AbilityTableMap::COL_ROUNDS, $this->rounds);
+        }
+        if ($this->isColumnModified(AbilityTableMap::COL_PASSIVE)) {
+            $criteria->add(AbilityTableMap::COL_PASSIVE, $this->passive);
         }
         if ($this->isColumnModified(AbilityTableMap::COL_CREATED_AT)) {
             $criteria->add(AbilityTableMap::COL_CREATED_AT, $this->created_at);
@@ -1177,6 +1372,9 @@ abstract class Ability implements ActiveRecordInterface
     {
         $copyObj->setAbilityId($this->getAbilityId());
         $copyObj->setName($this->getName());
+        $copyObj->setCooldown($this->getCooldown());
+        $copyObj->setRounds($this->getRounds());
+        $copyObj->setPassive($this->getPassive());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1217,6 +1415,9 @@ abstract class Ability implements ActiveRecordInterface
         $this->id = null;
         $this->ability_id = null;
         $this->name = null;
+        $this->cooldown = null;
+        $this->rounds = null;
+        $this->passive = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

@@ -39,6 +39,9 @@ CREATE TABLE `abilities`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `ability_id` INTEGER NOT NULL,
     `name` VARCHAR(255) NOT NULL,
+    `cooldown` INTEGER,
+    `rounds` INTEGER,
+    `passive` TINYINT(1),
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`)

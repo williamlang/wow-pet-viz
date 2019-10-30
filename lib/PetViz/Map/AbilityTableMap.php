@@ -59,7 +59,7 @@ class AbilityTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 8;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class AbilityTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /**
      * the column name for the id field
@@ -85,6 +85,21 @@ class AbilityTableMap extends TableMap
      * the column name for the name field
      */
     const COL_NAME = 'abilities.name';
+
+    /**
+     * the column name for the cooldown field
+     */
+    const COL_COOLDOWN = 'abilities.cooldown';
+
+    /**
+     * the column name for the rounds field
+     */
+    const COL_ROUNDS = 'abilities.rounds';
+
+    /**
+     * the column name for the passive field
+     */
+    const COL_PASSIVE = 'abilities.passive';
 
     /**
      * the column name for the created_at field
@@ -108,11 +123,11 @@ class AbilityTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'AbilityId', 'Name', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'abilityId', 'name', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(AbilityTableMap::COL_ID, AbilityTableMap::COL_ABILITY_ID, AbilityTableMap::COL_NAME, AbilityTableMap::COL_CREATED_AT, AbilityTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'ability_id', 'name', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'AbilityId', 'Name', 'Cooldown', 'Rounds', 'Passive', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'abilityId', 'name', 'cooldown', 'rounds', 'passive', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(AbilityTableMap::COL_ID, AbilityTableMap::COL_ABILITY_ID, AbilityTableMap::COL_NAME, AbilityTableMap::COL_COOLDOWN, AbilityTableMap::COL_ROUNDS, AbilityTableMap::COL_PASSIVE, AbilityTableMap::COL_CREATED_AT, AbilityTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'ability_id', 'name', 'cooldown', 'rounds', 'passive', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -122,11 +137,11 @@ class AbilityTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'AbilityId' => 1, 'Name' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'abilityId' => 1, 'name' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
-        self::TYPE_COLNAME       => array(AbilityTableMap::COL_ID => 0, AbilityTableMap::COL_ABILITY_ID => 1, AbilityTableMap::COL_NAME => 2, AbilityTableMap::COL_CREATED_AT => 3, AbilityTableMap::COL_UPDATED_AT => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'ability_id' => 1, 'name' => 2, 'created_at' => 3, 'updated_at' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'AbilityId' => 1, 'Name' => 2, 'Cooldown' => 3, 'Rounds' => 4, 'Passive' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'abilityId' => 1, 'name' => 2, 'cooldown' => 3, 'rounds' => 4, 'passive' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+        self::TYPE_COLNAME       => array(AbilityTableMap::COL_ID => 0, AbilityTableMap::COL_ABILITY_ID => 1, AbilityTableMap::COL_NAME => 2, AbilityTableMap::COL_COOLDOWN => 3, AbilityTableMap::COL_ROUNDS => 4, AbilityTableMap::COL_PASSIVE => 5, AbilityTableMap::COL_CREATED_AT => 6, AbilityTableMap::COL_UPDATED_AT => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'ability_id' => 1, 'name' => 2, 'cooldown' => 3, 'rounds' => 4, 'passive' => 5, 'created_at' => 6, 'updated_at' => 7, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -149,6 +164,9 @@ class AbilityTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('ability_id', 'AbilityId', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
+        $this->addColumn('cooldown', 'Cooldown', 'INTEGER', false, null, null);
+        $this->addColumn('rounds', 'Rounds', 'INTEGER', false, null, null);
+        $this->addColumn('passive', 'Passive', 'BOOLEAN', false, 1, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -317,12 +335,18 @@ class AbilityTableMap extends TableMap
             $criteria->addSelectColumn(AbilityTableMap::COL_ID);
             $criteria->addSelectColumn(AbilityTableMap::COL_ABILITY_ID);
             $criteria->addSelectColumn(AbilityTableMap::COL_NAME);
+            $criteria->addSelectColumn(AbilityTableMap::COL_COOLDOWN);
+            $criteria->addSelectColumn(AbilityTableMap::COL_ROUNDS);
+            $criteria->addSelectColumn(AbilityTableMap::COL_PASSIVE);
             $criteria->addSelectColumn(AbilityTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(AbilityTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.ability_id');
             $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.cooldown');
+            $criteria->addSelectColumn($alias . '.rounds');
+            $criteria->addSelectColumn($alias . '.passive');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }

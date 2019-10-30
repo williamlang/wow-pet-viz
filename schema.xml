@@ -24,6 +24,9 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
         <column name="ability_id" type="integer" required="true" />
         <column name="name" type="varchar" required="true" />
+        <column name="cooldown" type="integer" required="false" />
+        <column name="rounds" type="integer" required="false" />
+        <column name="passive" type="boolean" required="false" />
 
         <behavior name="timestampable" />
     </table>

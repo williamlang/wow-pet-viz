@@ -22,12 +22,18 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAbilityQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildAbilityQuery orderByAbilityId($order = Criteria::ASC) Order by the ability_id column
  * @method     ChildAbilityQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildAbilityQuery orderByCooldown($order = Criteria::ASC) Order by the cooldown column
+ * @method     ChildAbilityQuery orderByRounds($order = Criteria::ASC) Order by the rounds column
+ * @method     ChildAbilityQuery orderByPassive($order = Criteria::ASC) Order by the passive column
  * @method     ChildAbilityQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildAbilityQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildAbilityQuery groupById() Group by the id column
  * @method     ChildAbilityQuery groupByAbilityId() Group by the ability_id column
  * @method     ChildAbilityQuery groupByName() Group by the name column
+ * @method     ChildAbilityQuery groupByCooldown() Group by the cooldown column
+ * @method     ChildAbilityQuery groupByRounds() Group by the rounds column
+ * @method     ChildAbilityQuery groupByPassive() Group by the passive column
  * @method     ChildAbilityQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildAbilityQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -45,6 +51,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAbility findOneById(int $id) Return the first ChildAbility filtered by the id column
  * @method     ChildAbility findOneByAbilityId(int $ability_id) Return the first ChildAbility filtered by the ability_id column
  * @method     ChildAbility findOneByName(string $name) Return the first ChildAbility filtered by the name column
+ * @method     ChildAbility findOneByCooldown(int $cooldown) Return the first ChildAbility filtered by the cooldown column
+ * @method     ChildAbility findOneByRounds(int $rounds) Return the first ChildAbility filtered by the rounds column
+ * @method     ChildAbility findOneByPassive(boolean $passive) Return the first ChildAbility filtered by the passive column
  * @method     ChildAbility findOneByCreatedAt(string $created_at) Return the first ChildAbility filtered by the created_at column
  * @method     ChildAbility findOneByUpdatedAt(string $updated_at) Return the first ChildAbility filtered by the updated_at column *
 
@@ -54,6 +63,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAbility requireOneById(int $id) Return the first ChildAbility filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAbility requireOneByAbilityId(int $ability_id) Return the first ChildAbility filtered by the ability_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAbility requireOneByName(string $name) Return the first ChildAbility filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAbility requireOneByCooldown(int $cooldown) Return the first ChildAbility filtered by the cooldown column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAbility requireOneByRounds(int $rounds) Return the first ChildAbility filtered by the rounds column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAbility requireOneByPassive(boolean $passive) Return the first ChildAbility filtered by the passive column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAbility requireOneByCreatedAt(string $created_at) Return the first ChildAbility filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAbility requireOneByUpdatedAt(string $updated_at) Return the first ChildAbility filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -61,6 +73,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAbility[]|ObjectCollection findById(int $id) Return ChildAbility objects filtered by the id column
  * @method     ChildAbility[]|ObjectCollection findByAbilityId(int $ability_id) Return ChildAbility objects filtered by the ability_id column
  * @method     ChildAbility[]|ObjectCollection findByName(string $name) Return ChildAbility objects filtered by the name column
+ * @method     ChildAbility[]|ObjectCollection findByCooldown(int $cooldown) Return ChildAbility objects filtered by the cooldown column
+ * @method     ChildAbility[]|ObjectCollection findByRounds(int $rounds) Return ChildAbility objects filtered by the rounds column
+ * @method     ChildAbility[]|ObjectCollection findByPassive(boolean $passive) Return ChildAbility objects filtered by the passive column
  * @method     ChildAbility[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildAbility objects filtered by the created_at column
  * @method     ChildAbility[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildAbility objects filtered by the updated_at column
  * @method     ChildAbility[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -161,7 +176,7 @@ abstract class AbilityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, ability_id, name, created_at, updated_at FROM abilities WHERE id = :p0';
+        $sql = 'SELECT id, ability_id, name, cooldown, rounds, passive, created_at, updated_at FROM abilities WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -356,6 +371,115 @@ abstract class AbilityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(AbilityTableMap::COL_NAME, $name, $comparison);
+    }
+
+    /**
+     * Filter the query on the cooldown column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCooldown(1234); // WHERE cooldown = 1234
+     * $query->filterByCooldown(array(12, 34)); // WHERE cooldown IN (12, 34)
+     * $query->filterByCooldown(array('min' => 12)); // WHERE cooldown > 12
+     * </code>
+     *
+     * @param     mixed $cooldown The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAbilityQuery The current query, for fluid interface
+     */
+    public function filterByCooldown($cooldown = null, $comparison = null)
+    {
+        if (is_array($cooldown)) {
+            $useMinMax = false;
+            if (isset($cooldown['min'])) {
+                $this->addUsingAlias(AbilityTableMap::COL_COOLDOWN, $cooldown['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($cooldown['max'])) {
+                $this->addUsingAlias(AbilityTableMap::COL_COOLDOWN, $cooldown['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(AbilityTableMap::COL_COOLDOWN, $cooldown, $comparison);
+    }
+
+    /**
+     * Filter the query on the rounds column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByRounds(1234); // WHERE rounds = 1234
+     * $query->filterByRounds(array(12, 34)); // WHERE rounds IN (12, 34)
+     * $query->filterByRounds(array('min' => 12)); // WHERE rounds > 12
+     * </code>
+     *
+     * @param     mixed $rounds The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAbilityQuery The current query, for fluid interface
+     */
+    public function filterByRounds($rounds = null, $comparison = null)
+    {
+        if (is_array($rounds)) {
+            $useMinMax = false;
+            if (isset($rounds['min'])) {
+                $this->addUsingAlias(AbilityTableMap::COL_ROUNDS, $rounds['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($rounds['max'])) {
+                $this->addUsingAlias(AbilityTableMap::COL_ROUNDS, $rounds['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(AbilityTableMap::COL_ROUNDS, $rounds, $comparison);
+    }
+
+    /**
+     * Filter the query on the passive column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPassive(true); // WHERE passive = true
+     * $query->filterByPassive('yes'); // WHERE passive = true
+     * </code>
+     *
+     * @param     boolean|string $passive The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAbilityQuery The current query, for fluid interface
+     */
+    public function filterByPassive($passive = null, $comparison = null)
+    {
+        if (is_string($passive)) {
+            $passive = in_array(strtolower($passive), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(AbilityTableMap::COL_PASSIVE, $passive, $comparison);
     }
 
     /**
