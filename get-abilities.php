@@ -41,6 +41,11 @@
         $pet->save();
 
         if ($pet->getBattlepet()) {
+            // clear all abilities
+            PetAbilityQuery::create()
+                ->filterByPetId($pet->getPetId())
+                ->delete();
+
             foreach ($json['abilities'] as $jsonAbility) {
                 $ability = AbilityQuery::create()
                     ->filterByAbilityId($jsonAbility['ability']['id'])
@@ -49,12 +54,13 @@
                 $ability->setName($jsonAbility['ability']['name']);
                 $ability->save();
 
+                // re-add the join record
                 $petAbility = PetAbilityQuery::create()
                     ->filterByPetId($pet->getPetId())
-                    ->filterBySlot($jsonAbility['slot'])
+                    ->filterByAbilityId($ability->getAbilityId())
                     ->findOneOrCreate();
 
-                $petAbility->setAbilityId($ability->getAbilityId());
+                $petAbility->setSlot($jsonAbility['slot']);
                 $petAbility->setLevel($jsonAbility['required_level']);
                 $petAbility->save();
             }

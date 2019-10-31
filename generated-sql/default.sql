@@ -42,6 +42,7 @@ CREATE TABLE `abilities`
     `cooldown` INTEGER,
     `rounds` INTEGER,
     `passive` TINYINT(1),
+    `icon` VARCHAR(255) DEFAULT '',
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`)

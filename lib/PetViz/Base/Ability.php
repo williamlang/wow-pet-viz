@@ -105,6 +105,14 @@ abstract class Ability implements ActiveRecordInterface
     protected $passive;
 
     /**
+     * The value for the icon field.
+     *
+     * Note: this column has a database default value of: ''
+     * @var        string
+     */
+    protected $icon;
+
+    /**
      * The value for the created_at field.
      *
      * @var        DateTime
@@ -127,10 +135,23 @@ abstract class Ability implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->icon = '';
+    }
+
+    /**
      * Initializes internal state of PetViz\Base\Ability object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -422,6 +443,16 @@ abstract class Ability implements ActiveRecordInterface
     }
 
     /**
+     * Get the [icon] column value.
+     *
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -590,6 +621,26 @@ abstract class Ability implements ActiveRecordInterface
     } // setPassive()
 
     /**
+     * Set the value of [icon] column.
+     *
+     * @param string $v new value
+     * @return $this|\PetViz\Ability The current object (for fluent API support)
+     */
+    public function setIcon($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->icon !== $v) {
+            $this->icon = $v;
+            $this->modifiedColumns[AbilityTableMap::COL_ICON] = true;
+        }
+
+        return $this;
+    } // setIcon()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -639,6 +690,10 @@ abstract class Ability implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->icon !== '') {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -683,13 +738,16 @@ abstract class Ability implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : AbilityTableMap::translateFieldName('Passive', TableMap::TYPE_PHPNAME, $indexType)];
             $this->passive = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : AbilityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : AbilityTableMap::translateFieldName('Icon', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->icon = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : AbilityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : AbilityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : AbilityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -702,7 +760,7 @@ abstract class Ability implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = AbilityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = AbilityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\PetViz\\Ability'), 0, $e);
@@ -934,6 +992,9 @@ abstract class Ability implements ActiveRecordInterface
         if ($this->isColumnModified(AbilityTableMap::COL_PASSIVE)) {
             $modifiedColumns[':p' . $index++]  = 'passive';
         }
+        if ($this->isColumnModified(AbilityTableMap::COL_ICON)) {
+            $modifiedColumns[':p' . $index++]  = 'icon';
+        }
         if ($this->isColumnModified(AbilityTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
@@ -968,6 +1029,9 @@ abstract class Ability implements ActiveRecordInterface
                         break;
                     case 'passive':
                         $stmt->bindValue($identifier, (int) $this->passive, PDO::PARAM_INT);
+                        break;
+                    case 'icon':
+                        $stmt->bindValue($identifier, $this->icon, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1056,9 +1120,12 @@ abstract class Ability implements ActiveRecordInterface
                 return $this->getPassive();
                 break;
             case 6:
-                return $this->getCreatedAt();
+                return $this->getIcon();
                 break;
             case 7:
+                return $this->getCreatedAt();
+                break;
+            case 8:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1096,15 +1163,16 @@ abstract class Ability implements ActiveRecordInterface
             $keys[3] => $this->getCooldown(),
             $keys[4] => $this->getRounds(),
             $keys[5] => $this->getPassive(),
-            $keys[6] => $this->getCreatedAt(),
-            $keys[7] => $this->getUpdatedAt(),
+            $keys[6] => $this->getIcon(),
+            $keys[7] => $this->getCreatedAt(),
+            $keys[8] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[6]] instanceof \DateTimeInterface) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
         if ($result[$keys[7]] instanceof \DateTimeInterface) {
             $result[$keys[7]] = $result[$keys[7]]->format('c');
+        }
+
+        if ($result[$keys[8]] instanceof \DateTimeInterface) {
+            $result[$keys[8]] = $result[$keys[8]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1164,9 +1232,12 @@ abstract class Ability implements ActiveRecordInterface
                 $this->setPassive($value);
                 break;
             case 6:
-                $this->setCreatedAt($value);
+                $this->setIcon($value);
                 break;
             case 7:
+                $this->setCreatedAt($value);
+                break;
+            case 8:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1214,10 +1285,13 @@ abstract class Ability implements ActiveRecordInterface
             $this->setPassive($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setCreatedAt($arr[$keys[6]]);
+            $this->setIcon($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setUpdatedAt($arr[$keys[7]]);
+            $this->setCreatedAt($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setUpdatedAt($arr[$keys[8]]);
         }
     }
 
@@ -1277,6 +1351,9 @@ abstract class Ability implements ActiveRecordInterface
         }
         if ($this->isColumnModified(AbilityTableMap::COL_PASSIVE)) {
             $criteria->add(AbilityTableMap::COL_PASSIVE, $this->passive);
+        }
+        if ($this->isColumnModified(AbilityTableMap::COL_ICON)) {
+            $criteria->add(AbilityTableMap::COL_ICON, $this->icon);
         }
         if ($this->isColumnModified(AbilityTableMap::COL_CREATED_AT)) {
             $criteria->add(AbilityTableMap::COL_CREATED_AT, $this->created_at);
@@ -1375,6 +1452,7 @@ abstract class Ability implements ActiveRecordInterface
         $copyObj->setCooldown($this->getCooldown());
         $copyObj->setRounds($this->getRounds());
         $copyObj->setPassive($this->getPassive());
+        $copyObj->setIcon($this->getIcon());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1418,10 +1496,12 @@ abstract class Ability implements ActiveRecordInterface
         $this->cooldown = null;
         $this->rounds = null;
         $this->passive = null;
+        $this->icon = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);

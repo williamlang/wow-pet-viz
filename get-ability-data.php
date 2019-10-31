@@ -3,8 +3,8 @@
 
     use Carbon\Carbon;
     use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use PetViz\AbilityQuery;
+    use GuzzleHttp\Exception\ClientException;
+    use PetViz\AbilityQuery;
     use Propel\Runtime\ActiveQuery\Criteria;
 
     $token = file_get_contents('token');
@@ -31,6 +31,7 @@ use PetViz\AbilityQuery;
             $ability->setRounds($json['rounds']);
             $ability->setCooldown($json['cooldown']);
             $ability->setPassive($json['isPassive']);
+            $ability->setIcon(sprintf('https://render-us.worldofwarcraft.com/icons/56/%s.jpg', $json['icon']));
             $ability->setUpdatedAt(Carbon::now('UTC'));
             $ability->save();
         } catch (ClientException $e) {

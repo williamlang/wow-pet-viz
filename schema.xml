@@ -27,6 +27,7 @@
         <column name="cooldown" type="integer" required="false" />
         <column name="rounds" type="integer" required="false" />
         <column name="passive" type="boolean" required="false" />
+        <column name="icon" type="varchar" required="false" defaultValue="" />
 
         <behavior name="timestampable" />
     </table>
